@@ -1,0 +1,31 @@
+{
+    "name": "@webf/sprinkles",
+    "version": "0.0.1",
+    "description": "Reasonable web components",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/webf-zone/sprinkles.git"
+    },
+    "keywords": [
+        "custom-elements",
+        "web-components"
+    ],
+    "author": "",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/webf-zone/sprinkles/issues"
+    },
+    "homepage": "https://github.com/webf-zone/sprinkles#readme",
+    "devDependencies": {
+        "bs-platform": "^4.0.18",
+        "ppx-tea-jsx": "^0.2.1",
+        "rollup": "^1.1.2"
+    },
+    "dependencies": {
+        "bucklescript-tea": "^0.11.0"
+    }
+}

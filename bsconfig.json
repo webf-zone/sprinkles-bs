@@ -1,0 +1,22 @@
+{
+    "name": "sprinkles",
+    "version": "0.1.0",
+    "namespace": true,
+    "sources": {
+        "dir" : "src",
+        "subdirs" : true
+    },
+    "package-specs": {
+        "module": "es6",
+        "in-source": true
+    },
+    "suffix": ".bs.js",
+    "bs-dependencies": [
+        "bucklescript-tea"
+    ],
+    "ppx-flags": ["ppx-tea-jsx/ppx"],
+    "warnings": {
+        "error" : "+101"
+    },
+    "refmt": 3
+}
