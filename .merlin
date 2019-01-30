@@ -1,11 +1,16 @@
 ####{BSB GENERATED: NO EDIT
 B lib/bs
 FLG -open Sprinkles
+FLG -ppx /home/harshal/ub/sprinkles/node_modules/ppx-tea-jsx/ppx
 FLG -ppx /home/harshal/ub/sprinkles/node_modules/bs-platform/lib/bsppx.exe
 S /home/harshal/ub/sprinkles/node_modules/bs-platform/lib/ocaml
 B /home/harshal/ub/sprinkles/node_modules/bs-platform/lib/ocaml
 FLG -nostdlib -color always
 FLG -w -30-40+6+7+27+32..39+44+45+101
-S src
-B lib/bs/src
+S /home/harshal/ub/sprinkles/node_modules/bucklescript-tea/lib/ocaml
+B /home/harshal/ub/sprinkles/node_modules/bucklescript-tea/lib/ocaml
+S src/core
+B lib/bs/src/core
+S src/counter
+B lib/bs/src/counter
 ####BSB GENERATED: NO EDIT}
