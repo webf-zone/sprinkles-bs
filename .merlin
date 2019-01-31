@@ -11,6 +11,8 @@ S /home/harshal/ub/sprinkles/node_modules/bucklescript-tea/lib/ocaml
 B /home/harshal/ub/sprinkles/node_modules/bucklescript-tea/lib/ocaml
 S src/core
 B lib/bs/src/core
+S src/range
+B lib/bs/src/range
 S src/counter
 B lib/bs/src/counter
 ####BSB GENERATED: NO EDIT}

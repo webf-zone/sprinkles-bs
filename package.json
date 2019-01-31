@@ -24,6 +24,7 @@
     },
     "homepage": "https://github.com/webf-zone/sprinkles#readme",
     "dependencies": {
+        "@polymer/iron-icons": "^3.0.1",
         "bucklescript-tea": "^0.11.0"
     },
     "devDependencies": {
