@@ -1,4 +1,4 @@
-import resolve from 'rollup-plugin-node-resolve';
+// import resolve from 'rollup-plugin-node-resolve';
 
 export default {
     input: 'src/main.js',
@@ -6,6 +6,6 @@ export default {
         file: 'dist/bundle.js',
         format: 'esm',
         sourcemap: true
-    },
-    plugins: [ resolve() ]
+    }
+    // plugins: [ resolve() ]
 };

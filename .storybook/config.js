@@ -1,7 +1,7 @@
-// Import entire library
-import '@polymer/iron-icon/iron-icon.js';
-import '@polymer/iron-icons/iron-icons.js';
+// Import required dependencies
+// No dependencies currently
 
+// Import entire library
 import '../dist/bundle.js';
 
 import { configure } from '@storybook/html';
