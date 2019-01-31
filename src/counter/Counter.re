@@ -1,10 +1,8 @@
 /* opens the Tea.App modules into the current scope for Program access functions and types */
-open Tea.App;
 open Tea;
 open Tea.Html;
-open Dispatcher;
 
-module Task = Tea_task;
+open WCApp;
 
 [@bs.deriving
   {
@@ -18,19 +16,17 @@ type msg =
   | Set(int);
 
 type model = {
-  x: dispatcher,
   count: int
 };
 
-let init = (dsp: dispatcher) => ({ x: dsp, count: 10 }, Cmd.none);
+let init = (_initialCount: int) => ({ count: 10 }, Cmd.none);
 
-
-let update = (m: model, message: msg) =>
+let update = (send, m: model, message: msg) =>
   switch (message) {
-  | Increment => ({...m, count: m.count + 1 }, dispatch("increment", m.x))
-  | Decrement => ({...m, count: m.count - 1 }, dispatch("decrement", m.x))
-  | Reset => ({...m, count: 10}, Cmd.none)
-  | Set(value) => ({...m, count: value}, Cmd.none)
+  | Increment => ({count: m.count + 1}, send("increment"))
+  | Decrement => ({count: m.count - 1}, send("decrement"))
+  | Reset => ({count: 10}, Cmd.none)
+  | Set(value) => ({count: value}, Cmd.none)
   };
 
 let viewButton = (title: string, message: msg) =>
@@ -47,5 +43,4 @@ let view = (model: model) =>
 
 let subscriptions = _ => Sub.none;
 
-let main = standardProgram({init, update, view, subscriptions});
-/* let main = beginnerProgram({model: init(), update, view}); */
+let main = wcProgram({init, update, view, subscriptions});
