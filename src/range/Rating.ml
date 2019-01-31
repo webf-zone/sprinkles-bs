@@ -3,7 +3,9 @@ open Tea.Html
 open WCApp
 open Range
 
+
 (* This component depends upon polymer project *)
+(* LET ME TEST IT *)
 [%%raw "import '@polymer/iron-icon/iron-icon.js';"]
 [%%raw "import '@polymer/iron-icons/iron-icons.js';"]
 
@@ -23,7 +25,9 @@ let update _send (_m : range) (_message : msg) = (initialValue, Cmd.none)
 
 let ironIcon = node "iron-icon"
 
-let icons (m: range) = List.map (fun _x -> ironIcon [ attr "" "icon" "star-border" ] []) (range 0 m.high)
+let icon (type_ : string) = ironIcon [ attr "" "icon" type_ ] []
+
+let icons (m : range) = List.map (fun _x -> icon "star") (range 0 m.high)
 
 let view (m : range) =
   div

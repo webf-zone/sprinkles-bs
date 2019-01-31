@@ -1,5 +1,7 @@
 // Import required dependencies
 // No dependencies currently
+// import '@polymer/iron-icon/iron-icon.js';
+// import '@polymer/iron-icons/iron-icons.js';
 
 // Import entire library
 import '../dist/bundle.js';
