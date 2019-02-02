@@ -2,8 +2,13 @@ open Tea;
 open Tea.App;
 
 type sendCommand('msg) = string => Cmd.t('msg);
+
+type wcContext('msg) = {
+  send: sendCommand('msg)
+};
+
 type wcUpdate('model, 'msg) =
-  (sendCommand('msg), 'model, 'msg) => ('model, Cmd.t('msg));
+  (wcContext('msg), 'model, 'msg) => ('model, Cmd.t('msg));
 
 type wcProgram('flags, 'model, 'msg) = {
   init: 'flags => ('model, Cmd.t('msg)),
@@ -18,8 +23,11 @@ type dispatcher = {. [@bs.meth] "trigger": string => unit};
 let send = (x: dispatcher, eventName: string) =>
   Cmd.call(_enqueue => x##trigger(eventName));
 
-let makeUpdate = (dispatcher: dispatcher, update: wcUpdate('model, 'msg)) =>
-  send(dispatcher)->update;
+let makeContext = (x: dispatcher): wcContext('msg) => {
+  send: send(x)
+};
+
+let makeUpdate = (context: wcContext('msg), update: wcUpdate('model, 'msg)) => update(context);
 
 /* Our own web component program */
 let wcProgram =
@@ -29,7 +37,7 @@ let wcProgram =
       args,
       dispatcher: dispatcher,
     ) => {
-  let update = makeUpdate(dispatcher, program.update);
+  let update = dispatcher->makeContext->makeUpdate(program.update);
 
   let newProgram: standardProgram('flags, 'model, 'msg) = {
     init: program.init,
