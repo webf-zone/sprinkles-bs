@@ -1,4 +1,5 @@
 import resolve from 'rollup-plugin-node-resolve';
+import postcss from 'rollup-plugin-postcss';
 
 export default {
     input: 'src/main.js',
@@ -21,5 +22,12 @@ export default {
 
         return modules.some((x) => id.startsWith(x));
     },
-    // plugins: [ resolve() ]
+    plugins: [
+        postcss({
+            inject: false,
+            config: {
+                path: 'postcss.config.js'
+            }
+        })
+    ]
 };

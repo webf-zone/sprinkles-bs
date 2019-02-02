@@ -64,3 +64,4 @@ dist/
 lib/
 
 src/**/*.js
+!src/core/lib.js

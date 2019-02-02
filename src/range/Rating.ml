@@ -8,17 +8,23 @@ open Range
 [%%raw "import '@polymer/iron-icon/iron-icon.js';"]
 [%%raw "import '@polymer/iron-icons/iron-icons.js';"]
 
-let attr = Vdom.attribute
+(* Move to WCApp.re *)
+let attr (key : string) (value : string) = Vdom.attribute "" key value
 
+(* Move to Util library *)
 let rec range (start : int) (end_ : int) =
   if (start >= end_) then [] else start :: (range (start + 1) end_)
+
+let initialValue: range = { low = 0; high = 10; value = 5.0 }
+
+type model = {
+  r: range;
+}
 
 type msg =
   | OnRating of int
   | None
 [@@bs.deriving {accessors}]
-
-let initialValue: range = { low = 0; high = 10; value = 5.0 }
 
 let init (_initialCount : int) = (initialValue, Cmd.none)
 
@@ -31,15 +37,15 @@ let ironIcon = node "iron-icon"
 
 let icon (value : int) (iconName : string) =
   ironIcon
-  [ attr "" "icon" iconName
+  [ attr "icon" iconName
   ; onClick (OnRating value)
   ] []
 
-let makeIcon (index: int) (value: float) =
+let makeIcon (index : int) (value : float) =
   let indexVal = float_of_int(index + 1) in
   let iconName = if indexVal <= value then "star"
-      else if value > (indexVal -. 1.0) then "star-half"
-      else "star-border" in
+    else if value > (indexVal -. 1.0) then "star-half"
+    else "star-border" in
   icon (index + 1) iconName
 
 let icons (m : range) = List.mapi

@@ -5,11 +5,17 @@ storiesOf('Rating', module)
     .add('Basic', () => {
 
         const customComp = document.createElement('wf-rating');
-        // customComp = 10;
-
-        const customComp2 = document.createElement('div');
-
-        customComp2.innerHTML = '';
 
         return customComp;
+    })
+    .add('Managing events', () => {
+
+        const rootElm = document.createDocumentFragment();
+
+        const template = (data) => html`
+            <wf-rating></wf-rating>`;
+
+        render(template({ }), rootElm);
+
+        return rootElm;
     });

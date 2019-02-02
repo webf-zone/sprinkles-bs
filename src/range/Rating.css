@@ -1,0 +1,11 @@
+:host {
+    --main-color: #F09300;
+}
+
+.rating:hover {
+    cursor: pointer;
+}
+
+iron-icon {
+    fill: var(--main-color);
+}
