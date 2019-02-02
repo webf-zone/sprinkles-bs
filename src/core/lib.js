@@ -43,9 +43,10 @@ export function define(componentName, mainFn, props = [], style, send) {
 
                 // Trust simple dumb JS Closures
                 const dispatcher = {
-                    trigger: (name) => {
+                    trigger: (name, value) => {
+                        const event = new CustomEvent(name, { detail: value });
                         // this here refers to the Custom Element
-                        this.dispatchEvent(new CustomEvent(name));
+                        this.dispatchEvent(event);
                     }
                 };
 

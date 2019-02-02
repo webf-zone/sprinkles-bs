@@ -1,9 +1,15 @@
 open Tea;
 open Tea.App;
 
-type sendCommand('msg) = string => Cmd.t('msg);
+type any;
+type emitCommand('msg) = string => Cmd.t('msg);
+type sendCommand('msg) = (string, any) => Cmd.t('msg);
+
+/* https://stackoverflow.com/questions/8482624/ocaml-identity-function */
+external idd : 'any => any = "%identity";
 
 type wcContext('msg) = {
+  emit: emitCommand('msg),
   send: sendCommand('msg)
 };
 
@@ -18,13 +24,17 @@ type wcProgram('flags, 'model, 'msg) = {
 };
 
 /* Modelling plain JavaScript Object */
-type dispatcher = {. [@bs.meth] "trigger": string => unit};
+type dispatcher = {. [@bs.meth] "trigger": (string, any) => unit};
 
 let send = (x: dispatcher, eventName: string) =>
-  Cmd.call(_enqueue => x##trigger(eventName));
+  Cmd.call(_enqueue => x##trigger(eventName, idd()));
+
+let send2 = (x: dispatcher, eventName: string, eventData: any) =>
+  Cmd.call(_enqueue => x##trigger(eventName, eventData));
 
 let makeContext = (x: dispatcher): wcContext('msg) => {
-  send: send(x)
+  emit: send(x),
+  send: send2(x)
 };
 
 let makeUpdate = (context: wcContext('msg), update: wcUpdate('model, 'msg)) => update(context);

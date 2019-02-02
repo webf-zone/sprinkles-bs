@@ -12,8 +12,8 @@ storiesOf('Counter', module)
         const rootElm = document.createDocumentFragment();
 
         // Event handlers
-        const increment = () => render(template({ event: 'increment' }), rootElm);
-        const decrement = () => render(template({ event: 'decrement' }), rootElm);
+        const increment = (ev) => render(template({ event: `increment: ${ev.detail}` }), rootElm);
+        const decrement = (ev) => render(template({ event: `decrement: ${ev.detail}` }), rootElm);
 
         const template = (data) => html`
             <div>

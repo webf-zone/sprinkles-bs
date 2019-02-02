@@ -23,8 +23,8 @@ let init = (_initialCount: int) => ({ count: 10 }, Cmd.none);
 
 let update = (c, m: model, message: msg) =>
   switch (message) {
-  | Increment => ({count: m.count + 1}, c.send("increment"))
-  | Decrement => ({count: m.count - 1}, c.send("decrement"))
+  | Increment => ({count: m.count + 1}, c.send("increment", idd(m.count + 1)))
+  | Decrement => ({count: m.count - 1}, c.send("decrement", idd(m.count - 1)))
   | Reset => ({count: 10}, Cmd.none)
   | Set(value) => ({count: value}, Cmd.none)
   };
