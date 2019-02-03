@@ -25,7 +25,8 @@
     "homepage": "https://github.com/webf-zone/sprinkles#readme",
     "dependencies": {
         "@polymer/iron-icons": "^3.0.1",
-        "bucklescript-tea": "^0.11.0"
+        "bucklescript-tea": "^0.11.0",
+        "rxjs": "^6.4.0"
     },
     "devDependencies": {
         "@babel/core": "^7.2.2",

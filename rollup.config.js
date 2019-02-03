@@ -1,4 +1,4 @@
-import resolve from 'rollup-plugin-node-resolve';
+// import resolve from 'rollup-plugin-node-resolve';
 import postcss from 'rollup-plugin-postcss';
 
 export default {
@@ -14,10 +14,11 @@ export default {
     external: (id) => {
 
         const modules = [
+            '@polymer/iron-icon',
+            '@polymer/iron-icons',
             'bs-platform',
             'bucklescript-tea',
-            '@polymer/iron-icon',
-            '@polymer/iron-icons'
+            'rxjs'
         ];
 
         return modules.some((x) => id.startsWith(x));

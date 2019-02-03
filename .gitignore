@@ -65,3 +65,4 @@ lib/
 
 src/**/*.js
 !src/core/lib.js
+!src/main.js

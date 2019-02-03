@@ -41,6 +41,13 @@ let view = (model: model) =>
     <div> "Counter value is:" {text(string_of_int(model.count))} </div>
   </div>;
 
-let subscriptions = _ => Sub.none;
+let subscriptions2 = _ => Sub.none;
+
+let subscriptions = (_c, m: model) =>
+  if (m.count >= 10 && m.count < 20) {
+    Tea_time.every("KeyTime", 1000.0, (_val) => Increment);
+  } else {
+    Sub.none
+  }
 
 let main = wcProgram({init, update, view, subscriptions});
