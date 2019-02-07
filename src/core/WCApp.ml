@@ -50,16 +50,19 @@ let prop (x : jsContext) (propName : string) tagger =
       fun ()  -> rxSubscription##unsubscribe () in
     Tea_sub.registration ("prop-" ^ propName) enableCall
 
-let makeContext (x : jsContext) =
-  (
-    let emit eventName = Cmd.call (fun _enqueue -> x##trigger eventName ()) in
-    let send eventName payload = Cmd.call (fun _enqueue -> x##trigger eventName payload) in
-    {emit; send}: 'msg wcContext
-  )
+(* This is a different way to annotate functions *)
+let makeContext: jsContext -> 'msg wcContext =
+  fun x ->
+    let emit eventName =
+      Cmd.call (fun _enqueue -> x##trigger eventName ()) in
+    let send eventName payload =
+      Cmd.call (fun _enqueue -> x##trigger eventName payload) in
+    { emit; send }
 
 let makeUpdate (context : 'msg wcContext) (update: ('model, 'msg) wcUpdate) = update context
 
-let makeSubContext (x : jsContext) = ({prop = (prop x)}: 'msg wcSubContext)
+let makeSubContext: jsContext -> 'msg wcSubContext =
+  fun x -> { prop = (prop x) }
 
 let makeSubscription (context : 'msg wcSubContext) sub = sub context
 
