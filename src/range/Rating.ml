@@ -4,7 +4,7 @@ open WCApp
 open Range
 
 
-(* This component depends upon Polymer's icon project *)
+(* This component uses Polymer's icon project *)
 [%%raw "import '@polymer/iron-icon/iron-icon.js';"]
 [%%raw "import '@polymer/iron-icons/iron-icons.js';"]
 
