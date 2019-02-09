@@ -1,8 +1,6 @@
 open Tea
 open Tea.Html
 open WCApp
-open Range
-
 
 (* This component uses Polymer's icon project *)
 [%%raw "import '@polymer/iron-icon/iron-icon.js';"]
@@ -15,24 +13,42 @@ let attr (key : string) (value : string) = Vdom.attribute "" key value
 let rec range (start : int) (end_ : int) =
   if (start >= end_) then [] else start :: (range (start + 1) end_)
 
-let initialValue: range = { low = 0; high = 10; value = 5.0 }
-
 type model =
   {
     value: float;
-    high : int;
+    max : int;
+  }
+
+let initialValue =
+  {
+    max = 10;
+    value = 5.0;
   }
 
 type msg =
   | OnRating of int
+  | OnValue of float
+  | OnMax of int
   | None
 [@@bs.deriving {accessors}]
 
-let init (_initialCount : int) = (initialValue, Cmd.none)
+let propDecoder rawVal =
+  let open Json.Decoder in
+  let valD = field "value" Json.Decoder.float in
+  let maxD = field "max" int in
+    decodeValue (map2 (fun value max -> {value;max}) valD maxD) rawVal
 
-let update _send (m : range) (message : msg) =
+
+let init flags =
+  match propDecoder flags with
+  | Result.Ok v -> (v, Cmd.none)
+  | Result.Error _err -> (initialValue, Cmd.none)
+
+let update _context (m : model) (message : msg) =
   match message with
   | OnRating newVal -> ({ m with value = float_of_int(newVal) }, Cmd.none)
+  | OnValue newVal -> ({ m with value = newVal }, Cmd.none)
+  | OnMax newVal -> ({ m with max = newVal }, Cmd.none)
   | None -> (initialValue, Cmd.none)
 
 let ironIcon = node "iron-icon"
@@ -50,44 +66,29 @@ let makeIcon (index : int) (value : float) =
     else "star-border" in
   icon (index + 1) iconName
 
-let icons (m : range) = List.mapi
+let icons (m : model) = List.mapi
   (fun index _x -> makeIcon index m.value)
-  (range 0 m.high)
+  (range 0 m.max)
 
-let view (m : range) =
+let view (m : model) =
   div
     [ classList [("rating", true)] ]
     (icons m)
 
-(* let intDecoder = let open Json.Decoder in int *)
-let intDecoder = Json.Decoder.int
-
-(* { "data": { "val": 5.0 "high": 10 } } *)
-let propDecoder rawVal =
-  let open Json.Decoder in
-  let valD = field "value" Json.Decoder.float in
-  let highD = field "high" int in
-    decodeValue (map2 (fun value high -> {value;high}) valD highD) rawVal
-
 let subscriptions  c _m =
+  let open Json.Decoder in
   Tea.Sub.batch
   [ c.prop "value" (fun y ->
-      let result = Json.Decoder.decodeValue intDecoder y in
+      let result = decodeValue Json.Decoder.float y in
         match result with
         | Tea.Result.Error _ -> Js.Exn.raiseError "Invalid props for rating component"
-        | Tea.Result.Ok v -> OnRating v)
+        | Tea.Result.Ok v -> OnValue v)
 
   ; c.prop "max" (fun y ->
-      let result = propDecoder y in
-      let open Tea.Result in
+      let result = decodeValue int y in
         match result with
-        | Error v ->
-          Js.log v;
-          Js.Exn.raiseError "Invalid props "
-        | Ok v ->
-          Js.log "Valid props";
-          Js.log v;
-          OnRating 10)
+        | Result.Error _ -> Js.Exn.raiseError "Invalid props"
+        | Result.Ok v -> OnMax v)
   ]
 
 let main = wcProgram { init; update; view; subscriptions }
