@@ -19,7 +19,7 @@ type model = {
   count: int
 };
 
-let init = (_initialCount: int) => ({ count: 10 }, Cmd.none);
+let init = (_c, _initialCount: int) => ({ count: 10 }, Cmd.none);
 
 let update = (c, m: model, message: msg) =>
   switch (message) {

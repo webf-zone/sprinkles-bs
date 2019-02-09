@@ -15,12 +15,14 @@ let rec range (start : int) (end_ : int) =
 
 type model =
   {
+    disabled: bool;
     value: float;
     max : int;
   }
 
 let initialValue =
   {
+    disabled = true;
     max = 10;
     value = 5.0;
   }
@@ -34,12 +36,13 @@ type msg =
 
 let propDecoder rawVal =
   let open Json.Decoder in
+  let disabledD = field "disabled" bool in
   let valD = field "value" Json.Decoder.float in
   let maxD = field "max" int in
-    decodeValue (map2 (fun value max -> { value; max }) valD maxD) rawVal
+    decodeValue (map3 (fun disabled value max -> { disabled; value; max }) disabledD valD maxD) rawVal
 
 
-let init flags =
+let init _c flags =
   match propDecoder flags with
   | Result.Ok v -> (v, Cmd.none)
   | Result.Error _err -> (initialValue, Cmd.none)

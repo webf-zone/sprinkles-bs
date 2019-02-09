@@ -23,7 +23,7 @@ type ('model, 'msg) wcUpdate = 'msg wcContext -> 'model -> 'msg -> ('model* 'msg
 (* This is nominal typing *)
 type ('flags,'model,'msg) wcProgram =
   {
-    init: 'flags -> ('model* 'msg Cmd.t);
+    init: 'msg wcContext -> 'flags -> ('model* 'msg Cmd.t);
     update: ('model,'msg) wcUpdate;
     view: 'model -> 'msg Vdom.t;
     subscriptions: ('model,'msg) wcSubscriptions;
@@ -66,13 +66,17 @@ let makeSubContext: jsContext -> 'msg wcSubContext =
 
 let makeSubscription (context : 'msg wcSubContext) sub = sub context
 
+let makeInit (context : 'msg wcContext) init = init context
+
 let wcProgram (program : ('flags, 'model, 'msg) wcProgram) pnode args (glueObj : jsContext) =
-  let update =
-    (glueObj |. makeContext |. makeUpdate) program.update in
+
+  let context = makeContext glueObj in
+  let init = makeInit context program.init in
+  let update = makeUpdate context program.update in
   let subscriptions =
     (glueObj |. makeSubContext |. makeSubscription) program.subscriptions in
 
   let stdProgram : ('flags, 'model, 'msg) standardProgram =
-    { init = (program.init); update; view = (program.view); subscriptions; } in
+    { init; update; view = (program.view); subscriptions; } in
 
   standardProgram stdProgram pnode args
