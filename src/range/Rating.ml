@@ -17,19 +17,14 @@ let rec range (start : int) (end_ : int) =
 
 let initialValue: range = { low = 0; high = 10; value = 5.0 }
 
-type _model = {
-  r : range;
-}
-
-(* Tenative prop model *)
-type _propModel = {
-  value : float;
-  max : int;
-}
+type model =
+  {
+    value: float;
+    high : int;
+  }
 
 type msg =
   | OnRating of int
-  (* | OnSample of string *)
   | None
 [@@bs.deriving {accessors}]
 
@@ -38,7 +33,6 @@ let init (_initialCount : int) = (initialValue, Cmd.none)
 let update _send (m : range) (message : msg) =
   match message with
   | OnRating newVal -> ({ m with value = float_of_int(newVal) }, Cmd.none)
-  (* | OnSample _newVal  -> (initialValue, Cmd.none) *)
   | None -> (initialValue, Cmd.none)
 
 let ironIcon = node "iron-icon"
@@ -68,13 +62,34 @@ let view (m : range) =
 (* let intDecoder = let open Json.Decoder in int *)
 let intDecoder = Json.Decoder.int
 
+(* { "data": { "val": 5.0 "high": 10 } } *)
+let propDecoder rawVal =
+  let open Json.Decoder in
+  let valD = field "value" Json.Decoder.float in
+  let highD = field "high" int in
+    decodeValue (map2 (fun value high -> {value;high}) valD highD) rawVal
+
 let subscriptions  c _m =
   Tea.Sub.batch
   [ c.prop "value" (fun y ->
       let result = Json.Decoder.decodeValue intDecoder y in
         match result with
-          | Tea.Result.Error _ -> None
-          | Tea.Result.Ok v -> OnRating v)
+        | Tea.Result.Error _ -> Js.Exn.raiseError "Invalid props for rating component"
+        | Tea.Result.Ok v -> OnRating v)
+
+  ; c.prop "max" (fun y ->
+      let result = propDecoder y in
+      let open Tea.Result in
+        match result with
+        | Error v ->
+          Js.log v;
+          Js.Exn.raiseError "Invalid props "
+        | Ok v ->
+          Js.log "Valid props";
+          Js.log v;
+          OnRating 10)
   ]
 
 let main = wcProgram { init; update; view; subscriptions }
+
+let ratingProps = [| "max"; "value" |]
