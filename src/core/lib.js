@@ -52,7 +52,7 @@ export function define(componentName, mainFn, props = [], style, send) {
             if (!this[domInitialized]) {
 
                 // Trust simple dumb JS Closures
-                const dispatcher = {
+                const jsContext = {
 
                     trigger: (eventName, eventValue) => {
                         const event = new CustomEvent(eventName, { detail: eventValue });
@@ -71,12 +71,17 @@ export function define(componentName, mainFn, props = [], style, send) {
                     }
                 };
 
-                // Add stylesheet
-                // this.shadowRoot.innerHTML = `<style>\n${style}\n</style>`;
+                // Create an object that represents initial state of the component
+                // Ideally this should be decoded by the component
+                const flags = propsToObserve.reduce((acc, [name, symbol]) => {
+                    acc[name] = this[symbol];
+                    return acc;
+                }, {});
 
                 // Initiate TEA event loop
-                this[teaInstance] = mainFn(this.shadowRoot, null, dispatcher);
+                this[teaInstance] = mainFn(this.shadowRoot, flags, jsContext);
 
+                // Add stylesheet
                 const styleElm = document.createElement('style');
                 styleElm.innerHTML = style;
 

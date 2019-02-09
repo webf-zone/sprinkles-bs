@@ -11,7 +11,7 @@ import { configure } from '@storybook/html';
 
 function loadStories() {
     require('../stories/counter.js');
-    require('../stories/rating.js');
+    require('../stories/ratingStory.js');
 
     // You can require as many stories as you need.
 }

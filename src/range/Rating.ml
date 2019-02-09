@@ -36,7 +36,7 @@ let propDecoder rawVal =
   let open Json.Decoder in
   let valD = field "value" Json.Decoder.float in
   let maxD = field "max" int in
-    decodeValue (map2 (fun value max -> {value;max}) valD maxD) rawVal
+    decodeValue (map2 (fun value max -> { value; max }) valD maxD) rawVal
 
 
 let init flags =
@@ -44,9 +44,9 @@ let init flags =
   | Result.Ok v -> (v, Cmd.none)
   | Result.Error _err -> (initialValue, Cmd.none)
 
-let update _context (m : model) (message : msg) =
+let update c (m : model) (message : msg) =
   match message with
-  | OnRating newVal -> ({ m with value = float_of_int(newVal) }, Cmd.none)
+  | OnRating newVal -> (m, c.send "change" newVal)
   | OnValue newVal -> ({ m with value = newVal }, Cmd.none)
   | OnMax newVal -> ({ m with max = newVal }, Cmd.none)
   | None -> (initialValue, Cmd.none)
@@ -75,7 +75,7 @@ let view (m : model) =
     [ classList [("rating", true)] ]
     (icons m)
 
-let subscriptions  c _m =
+let subscriptions c _m =
   let open Json.Decoder in
   Tea.Sub.batch
   [ c.prop "value" (fun y ->

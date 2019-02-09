@@ -2,9 +2,14 @@ import { storiesOf } from '@storybook/html';
 import { html, render } from 'lit-html';
 
 storiesOf('Rating', module)
-    .add('Basic', () => {
+    .add('Basic change event', () => {
 
         const customComp = document.createElement('wf-rating');
+
+        customComp.value = 3.2;
+        customComp.max = 10;
+
+        customComp.addEventListener('change', (ev) => customComp.value = ev.detail);
 
         return customComp;
     })
