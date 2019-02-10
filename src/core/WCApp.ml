@@ -6,13 +6,16 @@ open Tea.App
 
 type 'msg wcContext =
   {
-    emit: string -> 'msg Cmd.t;
-    send: 'any . string -> 'any -> 'msg Cmd.t;
+    emit : string -> 'msg Cmd.t;
+    send : 'any. string -> 'any -> 'msg Cmd.t;
   }
 
 type 'msg wcSubContext =
   {
-    prop: string -> (Js_json.t -> 'msg) -> 'msg Sub.t
+    (* Note that this function take two arguments and not three
+       Second arugments itself is a callback
+    *)
+    prop : string -> (Js_json.t -> 'msg) -> 'msg Sub.t
   }
 
 type ('model, 'msg) wcSubscriptions = 'msg wcSubContext -> 'model -> 'msg Sub.t
@@ -21,23 +24,23 @@ type ('model, 'msg) wcSubscriptions = 'msg wcSubContext -> 'model -> 'msg Sub.t
 type ('model, 'msg) wcUpdate = 'msg wcContext -> 'model -> 'msg -> ('model* 'msg Cmd.t)
 
 (* This is nominal typing *)
-type ('flags,'model,'msg) wcProgram =
+type ('flags, 'model, 'msg) wcProgram =
   {
-    init: 'msg wcContext -> 'flags -> ('model* 'msg Cmd.t);
-    update: ('model,'msg) wcUpdate;
-    view: 'model -> 'msg Vdom.t;
-    subscriptions: ('model,'msg) wcSubscriptions;
+    init : 'msg wcContext -> 'flags -> ('model* 'msg Cmd.t);
+    update : ('model, 'msg) wcUpdate;
+    view : 'model -> 'msg Vdom.t;
+    subscriptions : ('model, 'msg) wcSubscriptions;
   }
 
 (* This is structural typing *)
 type rxSubscription =
   <
-    unsubscribe: (unit) -> unit [@bs.meth];
+    unsubscribe : (unit) -> unit [@bs.meth];
   > Js.t
 
 class type _jsContext = object
-    method trigger: 'any. string -> 'any -> unit
-    method subscribe: 'any. string -> 'any -> rxSubscription
+    method trigger : 'any. string -> 'any -> unit
+    method subscribe : 'any. string -> 'any -> rxSubscription
   end [@bs]
 
 type jsContext = _jsContext Js.t
@@ -51,7 +54,7 @@ let prop (x : jsContext) (propName : string) tagger =
     Tea_sub.registration ("prop-" ^ propName) enableCall
 
 (* This is a different way to annotate functions *)
-let makeContext: jsContext -> 'msg wcContext =
+let makeContext : jsContext -> 'msg wcContext =
   fun x ->
     let emit eventName =
       Cmd.call (fun _enqueue -> x##trigger eventName ()) in
@@ -59,7 +62,7 @@ let makeContext: jsContext -> 'msg wcContext =
       Cmd.call (fun _enqueue -> x##trigger eventName payload) in
     { emit; send }
 
-let makeUpdate (context : 'msg wcContext) (update: ('model, 'msg) wcUpdate) = update context
+let makeUpdate (context : 'msg wcContext) (update : ('model, 'msg) wcUpdate) = update context
 
 let makeSubContext: jsContext -> 'msg wcSubContext =
   fun x -> { prop = (prop x) }
