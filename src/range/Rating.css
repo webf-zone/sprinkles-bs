@@ -1,4 +1,5 @@
 :host {
+    --disabled-color: #888888;
     --main-color: #F09300;
 }
 
@@ -8,4 +9,12 @@
 
 iron-icon {
     fill: var(--main-color);
+}
+
+:host([disabled]) {
+    --main-color: var(--disabled-color);
+}
+
+:host([disabled]) .rating:hover {
+    cursor: auto;
 }

@@ -7,7 +7,8 @@ storiesOf('Rating', module)
         const customComp = document.createElement('wf-rating');
 
         customComp.value = 3.2;
-        customComp.max = 10;
+        customComp.max = 12;
+        customComp.disabled = true;
 
         customComp.addEventListener('change', (ev) => customComp.value = ev.detail);
 

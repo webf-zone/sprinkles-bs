@@ -3,7 +3,7 @@ import { filter, map } from 'rxjs/operators';
 
 // Important factor to keep in mind
 // https://stackoverflow.com/questions/43836886/failed-to-construct-customelement-error-when-javascript-file-is-placed-in-head
-export function define(componentName, mainFn, props = [], style, send) {
+export function define(componentName, mainFn, props = [], style) {
 
     // Private field - keeps track of loop initialization
     const domInitialized = Symbol();
@@ -53,6 +53,14 @@ export function define(componentName, mainFn, props = [], style, send) {
 
                 // Trust simple dumb JS Closures
                 const jsContext = {
+
+                    attr: (name, value) => {
+                        this.setAttribute(name, value);
+                    },
+
+                    removeAttr: (name) => {
+                        this.removeAttribute(name);
+                    },
 
                     trigger: (eventName, eventValue) => {
                         const event = new CustomEvent(eventName, { detail: eventValue });
