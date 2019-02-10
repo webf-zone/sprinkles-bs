@@ -5,7 +5,7 @@
     "module": "dist/bundle.js",
     "scripts": {
         "dev": "rollup -c --watch",
-        "build": "rollup -c",
+        "build": "PROD=true rollup -c",
         "storybook": "start-storybook -p 9001 -c .storybook",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
@@ -38,6 +38,7 @@
         "rollup": "^1.1.2",
         "rollup-plugin-node-resolve": "^4.0.0",
         "rollup-plugin-postcss": "^2.0.3",
+        "rollup-plugin-uglify": "^6.0.2",
         "tailwindcss": "^0.7.4"
     }
 }

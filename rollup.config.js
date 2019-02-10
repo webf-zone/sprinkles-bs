@@ -1,16 +1,35 @@
-// import resolve from 'rollup-plugin-node-resolve';
+import resolve from 'rollup-plugin-node-resolve';
 import postcss from 'rollup-plugin-postcss';
+import { uglify } from "rollup-plugin-uglify";
 
-export default {
+const prod = process.env.hasOwnProperty('PROD');
+
+const baseConfig = {
     input: 'src/main.js',
     output: {
         file: 'dist/bundle.js',
         format: 'esm'
         // sourcemap: true
     },
+
+    plugins: [
+        postcss({
+            inject: false,
+            config: {
+                path: 'postcss.config.js'
+            }
+        })
+    ]
+
+};
+
+const devConfig = {
+    ...baseConfig,
+
     watch: {
         exclude: 'node_modules/**'
     },
+
     external: (id) => {
 
         const modules = [
@@ -22,13 +41,20 @@ export default {
         ];
 
         return modules.some((x) => id.startsWith(x));
-    },
+    }
+
+};
+
+const prodConfig = {
+    ...baseConfig,
+
     plugins: [
-        postcss({
-            inject: false,
-            config: {
-                path: 'postcss.config.js'
-            }
-        })
+        ...baseConfig.plugins,
+        // resolve(),
+        // uglify(),
     ]
 };
+
+const config = prod ? prodConfig : devConfig;
+
+export default config;
