@@ -29,6 +29,7 @@ let initialValue =
 
 type msg =
   | OnRating of int
+  | OnDisabled of bool
   | OnValue of float
   | OnMax of int
   | None
@@ -42,16 +43,17 @@ let propDecoder rawVal =
     decodeValue (map3 (fun disabled value max -> { disabled; value; max }) disabledD valD maxD) rawVal
 
 
-let init _c flags =
+let init c flags =
   match propDecoder flags with
-  | Result.Ok v -> (v, Cmd.none)
+  | Result.Ok v -> (v, if v.disabled then c.attr "disabled" "" else Cmd.none)
   | Result.Error _err -> (initialValue, Cmd.none)
 
 let update c (m : model) (message : msg) =
   match message with
-  | OnRating newVal -> (m, c.send "change" newVal)
+  | OnRating newVal -> (m, if m.disabled then Cmd.none else c.send "change" newVal)
   | OnValue newVal -> ({ m with value = newVal }, Cmd.none)
   | OnMax newVal -> ({ m with max = newVal }, Cmd.none)
+  | OnDisabled newVal -> ({ m with disabled = newVal }, if newVal then c.attr "disabled" "" else c.removeAttr "disabled")
   | None -> (initialValue, Cmd.none)
 
 let ironIcon = node "iron-icon"
@@ -84,7 +86,7 @@ let subscriptions c _m =
   [ c.prop "value" (fun y ->
       let result = decodeValue Json.Decoder.float y in
         match result with
-        | Tea.Result.Error _ -> Js.Exn.raiseError "Invalid props for rating component"
+        | Tea.Result.Error _ -> Js.Exn.raiseError "Invalid props"
         | Tea.Result.Ok v -> OnValue v)
 
   ; c.prop "max" (fun y ->
@@ -92,8 +94,12 @@ let subscriptions c _m =
         match result with
         | Result.Error _ -> Js.Exn.raiseError "Invalid props"
         | Result.Ok v -> OnMax v)
+  ; c.prop "disabled" (fun y ->
+      match decodeValue bool y with
+      | Result.Error _ -> Js.Exn.raiseError "Invalid props"
+      | Result.Ok v -> OnDisabled v)
   ]
 
 let main = wcProgram { init; update; view; subscriptions }
 
-let ratingProps = [| "max"; "value" |]
+let ratingProps = [| "max"; "value"; "disabled" |]

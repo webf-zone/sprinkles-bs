@@ -8,6 +8,9 @@ type 'msg wcContext =
   {
     emit : string -> 'msg Cmd.t;
     send : 'any. string -> 'any -> 'msg Cmd.t;
+
+    attr : string -> string -> 'msg Cmd.t;
+    removeAttr : string -> 'msg Cmd.t;
   }
 
 type 'msg wcSubContext =
@@ -39,6 +42,8 @@ type rxSubscription =
   > Js.t
 
 class type _jsContext = object
+    method attr: string -> string -> unit
+    method removeAttr: string -> unit
     method trigger : 'any. string -> 'any -> unit
     method subscribe : 'any. string -> 'any -> rxSubscription
   end [@bs]
@@ -60,7 +65,11 @@ let makeContext : jsContext -> 'msg wcContext =
       Cmd.call (fun _enqueue -> x##trigger eventName ()) in
     let send eventName payload =
       Cmd.call (fun _enqueue -> x##trigger eventName payload) in
-    { emit; send }
+    let attr attributeName attributeValue =
+      Cmd.call (fun _enqueue -> x##attr attributeName attributeValue) in
+    let removeAttr attributeName =
+      Cmd.call (fun _enqueue -> x##removeAttr attributeName) in
+    { emit; send; attr; removeAttr }
 
 let makeUpdate (context : 'msg wcContext) (update : ('model, 'msg) wcUpdate) = update context
 
