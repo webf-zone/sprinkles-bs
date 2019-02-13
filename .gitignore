@@ -63,6 +63,6 @@ typings/
 dist/
 lib/
 
-src/**/*.js
-!src/core/lib.js
-!src/main.js
+# Ignore generated bucklescript files
+src/**/*.bs.js
+.out/

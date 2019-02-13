@@ -23,8 +23,8 @@ type model =
 let initialValue =
   {
     disabled = true;
-    max = 10;
-    value = 5.0;
+    max = 5;
+    value = 0.0;
   }
 
 type msg =
@@ -37,9 +37,18 @@ type msg =
 
 let propDecoder rawVal =
   let open Json.Decoder in
-  let disabledD = field "disabled" bool in
-  let valD = field "value" Json.Decoder.float in
-  let maxD = field "max" int in
+  let disabledD = oneOf
+    [ field "disabled" bool
+    ; succeed initialValue.disabled
+    ] in
+  let valD = oneOf
+    [ field "value" Json.Decoder.float
+    ; succeed initialValue.value
+    ] in
+  let maxD = oneOf
+    [ field "max" int
+    ; succeed initialValue.max
+    ] in
     decodeValue (map3 (fun disabled value max -> { disabled; value; max }) disabledD valD maxD) rawVal
 
 

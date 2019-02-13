@@ -6,7 +6,9 @@
     "scripts": {
         "dev": "rollup -c --watch",
         "build": "PROD=true rollup -c",
-        "storybook": "start-storybook -p 9001 -c .storybook",
+        "storybook": "start-storybook -p 9001 -c storybook",
+        "storybook-build": "build-storybook -c storybook -o .out",
+        "storybook-deploy": "npm run storybook-build && storybook-to-ghpages -e=.out",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
@@ -30,7 +32,9 @@
     },
     "devDependencies": {
         "@babel/core": "^7.2.2",
+        "@storybook/addon-notes": "^4.1.11",
         "@storybook/html": "^4.1.11",
+        "@storybook/storybook-deployer": "^2.8.1",
         "babel-loader": "^8.0.5",
         "bs-platform": "^4.0.18",
         "lit-html": "^1.0.0-rc.2",
