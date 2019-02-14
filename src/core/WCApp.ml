@@ -6,10 +6,20 @@ open Tea.App
 
 type 'msg wcContext =
   {
+
+    (* Actual web component reference *)
+    elm : Dom.htmlElement;
+
+    (* Create a custom event without any data *)
     emit : string -> 'msg Cmd.t;
+
+    (* Create a custom event with any payload *)
     send : 'any. string -> 'any -> 'msg Cmd.t;
 
+    (* Add/Update attribute *)
     attr : string -> string -> 'msg Cmd.t;
+
+    (* Remove the attribute *)
     removeAttr : string -> 'msg Cmd.t;
   }
 
@@ -42,13 +52,16 @@ type rxSubscription =
   > Js.t
 
 class type _jsContext = object
-    method attr: string -> string -> unit
-    method removeAttr: string -> unit
+    method elm : Dom.htmlElement [@@bs.set]
+    method attr : string -> string -> unit
+    method removeAttr : string -> unit
     method trigger : 'any. string -> 'any -> unit
     method subscribe : 'any. string -> 'any -> rxSubscription
   end [@bs]
 
 type jsContext = _jsContext Js.t
+
+let attr (key : string) (value : string) = Vdom.attribute "" key value
 
 let prop (x : jsContext) (propName : string) tagger =
   let open Vdom in
@@ -69,7 +82,7 @@ let makeContext : jsContext -> 'msg wcContext =
       Cmd.call (fun _enqueue -> x##attr attributeName attributeValue) in
     let removeAttr attributeName =
       Cmd.call (fun _enqueue -> x##removeAttr attributeName) in
-    { emit; send; attr; removeAttr }
+    { elm = x##elm; emit; send; attr; removeAttr }
 
 let makeUpdate (context : 'msg wcContext) (update : ('model, 'msg) wcUpdate) = update context
 

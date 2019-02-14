@@ -13,6 +13,8 @@ S src/core
 B lib/bs/src/core
 S src/range
 B lib/bs/src/range
+S src/popper
+B lib/bs/src/popper
 S src/counter
 B lib/bs/src/counter
 ####BSB GENERATED: NO EDIT}

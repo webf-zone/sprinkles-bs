@@ -6,17 +6,10 @@ open WCApp
 [%%raw "import '@polymer/iron-icon/iron-icon.js';"]
 [%%raw "import '@polymer/iron-icons/iron-icons.js';"]
 
-(* Move to WCApp.re *)
-let attr (key : string) (value : string) = Vdom.attribute "" key value
-
-(* Move to Util library *)
-let rec range (start : int) (end_ : int) =
-  if (start >= end_) then [] else start :: (range (start + 1) end_)
-
 type model =
   {
-    disabled: bool;
-    value: float;
+    disabled : bool;
+    value : float;
     max : int;
   }
 
@@ -32,7 +25,7 @@ type msg =
   | OnDisabled of bool
   | OnValue of float
   | OnMax of int
-  | None
+  | Nope
 [@@bs.deriving {accessors}]
 
 let propDecoder rawVal =
@@ -63,7 +56,7 @@ let update c (m : model) (message : msg) =
   | OnValue newVal -> ({ m with value = newVal }, Cmd.none)
   | OnMax newVal -> ({ m with max = newVal }, Cmd.none)
   | OnDisabled newVal -> ({ m with disabled = newVal }, if newVal then c.attr "disabled" "" else c.removeAttr "disabled")
-  | None -> (initialValue, Cmd.none)
+  | Nope -> (initialValue, Cmd.none)
 
 let ironIcon = node "iron-icon"
 
@@ -82,7 +75,7 @@ let makeIcon (index : int) (value : float) =
 
 let icons (m : model) = List.mapi
   (fun index _x -> makeIcon index m.value)
-  (range 0 m.max)
+  (Util.range 0 m.max)
 
 let view (m : model) =
   div
@@ -103,6 +96,7 @@ let subscriptions c _m =
         match result with
         | Result.Error _ -> Js.Exn.raiseError "Invalid props"
         | Result.Ok v -> OnMax v)
+
   ; c.prop "disabled" (fun y ->
       match decodeValue bool y with
       | Result.Error _ -> Js.Exn.raiseError "Invalid props"

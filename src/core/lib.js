@@ -54,6 +54,9 @@ export function define(componentName, mainFn, props = [], style) {
                 // Trust simple dumb JS Closures
                 const jsContext = {
 
+                    // Actual DOM Node
+                    elm: this,
+
                     attr: (name, value) => {
                         this.setAttribute(name, value);
                     },

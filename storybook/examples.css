@@ -1,0 +1,8 @@
+.popper-story {
+    position: fixed;
+    display: flex;
+    top: 50%;
+    left: 0;
+    right: 0;
+    justify-content: center;
+}

@@ -37,6 +37,7 @@ const devConfig = {
             '@polymer/iron-icons',
             'bs-platform',
             'bucklescript-tea',
+            'popper.js',
             'rxjs'
         ];
 
