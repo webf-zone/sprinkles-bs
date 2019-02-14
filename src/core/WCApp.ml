@@ -28,7 +28,9 @@ type 'msg wcSubContext =
     (* Note that this function take two arguments and not three
        Second arugments itself is a callback
     *)
-    prop : string -> (Js_json.t -> 'msg) -> 'msg Sub.t
+    prop : string -> (Js_json.t -> 'msg) -> 'msg Sub.t;
+
+    lightDomM : 'msg Mutation.mutationSubscriptionCb -> 'msg Sub.t
   }
 
 type ('model, 'msg) wcSubscriptions = 'msg wcSubContext -> 'model -> 'msg Sub.t
@@ -69,7 +71,8 @@ let prop (x : jsContext) (propName : string) tagger =
       let nextFn anyVal = callbacks.enqueue (tagger anyVal) in
       let rxSubscription = x##subscribe propName nextFn in
       fun ()  -> rxSubscription##unsubscribe () in
-    Tea_sub.registration ("prop-" ^ propName) enableCall
+    Sub.registration ("prop-" ^ propName) enableCall
+
 
 (* This is a different way to annotate functions *)
 let makeContext : jsContext -> 'msg wcContext =
@@ -87,7 +90,10 @@ let makeContext : jsContext -> 'msg wcContext =
 let makeUpdate (context : 'msg wcContext) (update : ('model, 'msg) wcUpdate) = update context
 
 let makeSubContext: jsContext -> 'msg wcSubContext =
-  fun x -> { prop = (prop x) }
+  fun x ->
+    { prop = (prop x);
+      lightDomM = Mutation.lightDomM x##elm
+    }
 
 let makeSubscription (context : 'msg wcSubContext) sub = sub context
 

@@ -7,7 +7,7 @@ import { main as ratingMain , ratingProps } from './range/Rating.bs';
 import ratingStyle from './range/Rating.css';
 
 // Popper component
-import { main as popperContentMain, poperContentProps } from './popper/Popper.bs';
+import { main as popperMain, popperProps } from './popper/Popper.bs';
 
 // All component definitions
 
@@ -17,4 +17,4 @@ define('wf-counter', counterMain, ['count'], '');
 // Define rating component
 define('wf-rating', ratingMain, ratingProps, ratingStyle);
 
-define('wf-popper', popperContentMain, poperContentProps, '');
+define('wf-popper', popperMain, popperProps, '');

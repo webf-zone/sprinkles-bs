@@ -11,6 +11,7 @@ type model =
 type msg =
   | OnAnchor of Dom.htmlElement
   | OnOpen of bool
+  | OnMutation
   | Nope
 
 
@@ -43,6 +44,7 @@ let update c (m : model) (message : msg) =
   match message with
   | OnAnchor anchorElm -> whenAnchorChange c m anchorElm
   | OnOpen isOpen -> whenOpenChange m isOpen
+  | OnMutation -> whenOpenChange m m.opened
   | Nope -> (m, Cmd.none)
 
 let view (m : model) =
@@ -64,8 +66,10 @@ let subscriptions c _m =
       match decodeValue bool y with
       | Result.Ok isOpen -> OnOpen isOpen
       | Result.Error _ -> Js.Exn.raiseError "Invalid props")
+
+  ; c.lightDomM (fun _y -> OnMutation)
   ]
 
 let main = wcProgram { init; update; view; subscriptions; }
 
-let poperContentProps = [| "anchorElm"; "open" |]
+let popperProps = [| "anchorElm"; "open" |]
